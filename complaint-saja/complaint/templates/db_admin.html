@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Database Admin — Complaint Desk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0d0f1a;
+      --surface: #13162b;
+      --card: #181c35;
+      --border: rgba(255, 255, 255, .07);
+      --accent: #6c63ff;
+      --accent2: #a78bfa;
+      --danger: #f43f5e;
+      --danger-bg: rgba(244, 63, 94, .12);
+      --success: #10b981;
+      --warn: #f59e0b;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --row-hover: rgba(108, 99, 255, .07);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── TOP NAV ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 60px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .topbar-brand svg {
+      flex-shrink: 0;
+    }
+
+    .topbar-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .topbar-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .85rem;
+      padding: .35rem .8rem;
+      border-radius: 6px;
+      transition: all .2s;
+    }
+
+    .topbar-links a:hover {
+      color: var(--text);
+      background: var(--border);
+    }
+
+    .topbar-links a.active {
+      color: var(--accent2);
+    }
+
+    /* ── LAYOUT ── */
+    .wrapper {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .page-header p {
+      color: var(--muted);
+      font-size: .88rem;
+      margin-top: .25rem;
+    }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.2rem 1.4rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .4);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent-light, rgba(108, 99, 255, .08)), transparent);
+      pointer-events: none;
+    }
+
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: .8rem;
+      margin-top: .25rem;
+    }
+
+    /* ── FLASH ── */
+    .flash-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .flash {
+      padding: .75rem 1.2rem;
+      border-radius: 8px;
+      font-size: .88rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+
+    .flash.success {
+      background: rgba(16, 185, 129, .12);
+      border: 1px solid rgba(16, 185, 129, .3);
+      color: #6ee7b7;
+    }
+
+    .flash.error {
+      background: var(--danger-bg);
+      border: 1px solid rgba(244, 63, 94, .3);
+      color: #fca5b8;
+    }
+
+    /* ── TAB BAR ── */
+    .tabs {
+      display: flex;
+      gap: .5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: .5rem 1.2rem;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      transition: all .2s;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 0 18px rgba(108, 99, 255, .35);
+    }
+
+    /* ── SECTION ── */
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    /* ── TABLE CARD ── */
+    .table-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+
+    .table-card-header {
+      padding: 1rem 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: .75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table-card-header h2 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .4rem .75rem;
+    }
+
+    .search-box input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: .85rem;
+      width: 200px;
+    }
+
+    .search-box input::placeholder {
+      color: var(--muted);
+    }
+
+    /* ── DATA TABLE ── */
+    .data-table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .84rem;
+    }
+
+    thead th {
+      padding: .75rem 1rem;
+      text-align: left;
+      color: var(--muted);
+      font-weight: 500;
+      font-size: .78rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, .03);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: var(--row-hover);
+    }
+
+    tbody td {
+      padding: .7rem 1rem;
+      vertical-align: middle;
+    }
+
+    /* ── BADGES ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      padding: .2rem .65rem;
+      border-radius: 99px;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+
+    .badge-admin {
+      background: rgba(245, 158, 11, .12);
+      color: var(--warn);
+    }
+
+    .badge-user {
+      background: rgba(108, 99, 255, .12);
+      color: var(--accent2);
+    }
+
+    .badge-done {
+      background: rgba(16, 185, 129, .12);
+      color: var(--success);
+    }
+
+    .badge-pending {
+      background: rgba(244, 63, 94, .12);
+      color: var(--danger);
+    }
+
+    .badge-read {
+      background: rgba(16, 185, 129, .12);
+      color: var(--success);
+    }
+
+    .badge-unread {
+      background: rgba(245, 158, 11, .12);
+      color: var(--warn);
+    }
+
+    /* ── ACTIONS ── */
+    .btn-delete {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .35rem .85rem;
+      border-radius: 7px;
+      font-size: .78rem;
+      font-weight: 600;
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid rgba(244, 63, 94, .25);
+      cursor: pointer;
+      transition: all .2s;
+      font-family: inherit;
+    }
+
+    .btn-delete:hover {
+      background: var(--danger);
+      color: #fff;
+      border-color: var(--danger);
+    }
+
+    .btn-approve {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .35rem .85rem;
+      border-radius: 7px;
+      font-size: .78rem;
+      font-weight: 600;
+      background: rgba(16, 185, 129, .12);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, .25);
+      cursor: pointer;
+      transition: all .2s;
+      font-family: inherit;
+      margin-right: .5rem;
+    }
+
+    .btn-approve:hover {
+      background: var(--success);
+      color: #fff;
+      border-color: var(--success);
+    }
+
+    /* ── BULK DELETE ── */
+    .bulk-bar {
+      display: none;
+      align-items: center;
+      gap: 1rem;
+      padding: .75rem 1.4rem;
+      background: rgba(244, 63, 94, .08);
+      border-bottom: 1px solid rgba(244, 63, 94, .2);
+    }
+
+    .bulk-bar.visible {
+      display: flex;
+    }
+
+    .bulk-bar span {
+      font-size: .88rem;
+      color: var(--danger);
+      font-weight: 600;
+    }
+
+    .btn-bulk-delete {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .4rem 1rem;
+      border-radius: 7px;
+      font-size: .82rem;
+      font-weight: 600;
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity .2s;
+    }
+
+    .btn-bulk-delete:hover {
+      opacity: .85;
+    }
+
+    /* ── CHECKBOX ── */
+    input[type=checkbox] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    /* ── NOTE CELL ── */
+    .note-cell {
+      max-width: 260px;
+    }
+
+    .note-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 240px;
+      display: block;
+    }
+
+    .note-text:hover {
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      padding: 3rem;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .empty-state svg {
+      opacity: .25;
+      margin-bottom: 1rem;
+    }
+
+    /* ── DANGER CONFIRM ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(0, 0, 0, .65);
+      backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 90%;
+      animation: popIn .2s ease;
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(.92);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: .5rem;
+    }
+
+    .modal p {
+      color: var(--muted);
+      font-size: .88rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: .75rem;
+      justify-content: flex-end;
+    }
+
+    .btn-cancel {
+      padding: .5rem 1.2rem;
+      border-radius: 8px;
+      font-size: .88rem;
+      font-weight: 600;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .2s;
+    }
+
+    .btn-cancel:hover {
+      background: var(--border);
+    }
+
+    .btn-confirm-del {
+      padding: .5rem 1.2rem;
+      border-radius: 8px;
+      font-size: .88rem;
+      font-weight: 600;
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity .2s;
+    }
+
+    .btn-confirm-del:hover {
+      opacity: .85;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #2a2f4a;
+      border-radius: 99px;
+    }
+
+    
+  /* ── LOG PREVIOUS BUTTON (matches tab-btn style) ── */
+  .btn-log-previous {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    transition: all 0.2s;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .btn-log-previous svg {
+    flex-shrink: 0;
+  }
+
+  .btn-log-previous:hover {
+    color: var(--text);
+    border-color: var(--accent);
+  }
+
+  .btn-log-previous:active {
+    transform: scale(0.97);
+  }
+
+  .btn-log-previous:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+
+
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav class="topbar">
+    <div class="topbar-brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#grad1)" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <defs>
+          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6c63ff" />
+            <stop offset="100%" stop-color="#a78bfa" />
+          </linearGradient>
+        </defs>
+        <ellipse cx="12" cy="5" rx="9" ry="3" />
+        <path d="M21 12c0 1.66-4.03 3-9 3S3 13.66 3 12" />
+        <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5" />
+      </svg>
+      Database Admin
+    </div>
+    <div class="topbar-links">
+      <a href="/admin">← Admin Dashboard</a>
+      <a href="/logout">Logout</a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="wrapper">
+
+    <!-- HEADER -->
+    <div class="page-header">
+      <div>
+        <h1>🗄️ Database Viewer</h1>
+        <p>Manually view, search, and delete records from your SQLite database.</p>
+      </div>
+    </div>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-wrap">
+      {% for cat, msg in messages %}
+      <div class="flash {{ cat }}">
+        {% if cat == 'success' %}✅{% else %}❌{% endif %} {{ msg }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num" style="color: var(--accent2);">{{ users|length }}</div>
+        <div class="stat-label">Total Users</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color: #38bdf8;">{{ places|length }}</div>
+        <div class="stat-label">Total Places</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color: var(--warn);">{{ complaints|length }}</div>
+        <div class="stat-label">Total Complaints</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color: var(--success);">{{
+          complaints|selectattr('is_completed','equalto',1)|list|length }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color: var(--danger);">{{
+          complaints|selectattr('is_completed','equalto',0)|list|length }}</div>
+        <div class="stat-label">Pending</div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('complaints',this)">💬 Complaints ({{ complaints|length
+        }})</button>
+      <button class="tab-btn" onclick="switchTab('places',this)">📍 Places ({{ places|length }})</button>
+      <button class="tab-btn" onclick="switchTab('users',this)">👤 Users ({{ users|length }})</button>
+     
+      <button class="btn-log-previous" onclick="openPreviousLogs()" title="View Previous Logs">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+        Log Previous
+      </button>
+    </div>
+
+    <!-- ═══════════════ COMPLAINTS ═══════════════ -->
+    <div id="tab-complaints" class="section active">
+      <div class="table-card">
+        <div class="table-card-header">
+          <h2>Complaints Table</h2>
+          <div class="search-box">
+            🔍 <input type="text" id="search-complaints" placeholder="Search note or place…"
+              oninput="filterTable('complaints-tbody','search-complaints',[2,3])">
+          </div>
+        </div>
+
+        <!-- Bulk bar -->
+        <div class="bulk-bar" id="bulk-bar-complaints">
+          <span id="bulk-count-complaints">0 selected</span>
+          <button class="btn-bulk-delete" onclick="confirmBulkDelete('complaints')">
+            🗑 Delete Selected
+          </button>
+          <button class="btn-cancel" style="font-size:.8rem;padding:.35rem .9rem;"
+            onclick="clearSelection('complaints')">Cancel</button>
+        </div>
+
+        <div class="data-table-wrap">
+          {% if complaints %}
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="chk-all-complaints" onchange="toggleAll('complaints',this)"></th>
+                <th>ID</th>
+                <th>Note</th>
+                <th>Place</th>
+                <th>Created At</th>
+                <th>Status</th>
+                <th>Read</th>
+                <th>Completed At</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="complaints-tbody">
+              {% for c in complaints %}
+              <tr data-id="{{ c.id }}">
+                <td><input type="checkbox" class="row-chk chk-complaints" onchange="updateBulkBar('complaints')"
+                    value="{{ c.id }}"></td>
+                <td style="color:var(--muted);font-size:.78rem;">#{{ c.id }}</td>
+                <td class="note-cell"><span class="note-text" title="{{ c.note }}">{{ c.note }}</span></td>
+                <td>{{ c.place_name }}</td>
+                <td style="color:var(--muted);font-size:.8rem;white-space:nowrap;">{{ c.created_at }}</td>
+                <td>
+                  {% if c.is_completed %}
+                  <span class="badge badge-done">✔ Done</span>
+                  {% else %}
+                  <span class="badge badge-pending">⏳ Pending</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if c.is_read %}
+                  <span class="badge badge-read">✔ Read</span>
+                  {% else %}
+                  <span class="badge badge-unread">● Unread</span>
+                  {% endif %}
+                </td>
+                <td style="color:var(--muted);font-size:.8rem;white-space:nowrap;">{{ c.completed_at or '—' }}</td>
+                <td>
+                  <form method="POST" action="/db-admin/delete/complaint/{{ c.id }}" onsubmit="return false;"
+                    data-action="/db-admin/delete/complaint/{{ c.id }}">
+                    <button type="button" class="btn-delete" onclick="confirmDelete(this.closest('form'))">
+                      🗑 Delete
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="8" y1="15" x2="16" y2="15" />
+              <line x1="9" y1="9" x2="9.01" y2="9" />
+              <line x1="15" y1="9" x2="15.01" y2="9" />
+            </svg>
+            <p>No complaints found.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PLACES ═══════════════ -->
+    <div id="tab-places" class="section">
+      <div class="table-card">
+        <div class="table-card-header">
+          <h2>Places Table</h2>
+          <div class="search-box">
+            🔍 <input type="text" id="search-places" placeholder="Search place name…"
+              oninput="filterTable('places-tbody','search-places',[2])">
+          </div>
+        </div>
+
+        <div class="bulk-bar" id="bulk-bar-places">
+          <span id="bulk-count-places">0 selected</span>
+          <button class="btn-bulk-delete" onclick="confirmBulkDelete('places')">🗑 Delete Selected</button>
+          <button class="btn-cancel" style="font-size:.8rem;padding:.35rem .9rem;"
+            onclick="clearSelection('places')">Cancel</button>
+        </div>
+
+        <div class="data-table-wrap">
+          {% if places %}
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="chk-all-places" onchange="toggleAll('places',this)"></th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Complaints</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="places-tbody">
+              {% for p in places %}
+              <tr>
+                <td><input type="checkbox" class="row-chk chk-places" onchange="updateBulkBar('places')"
+                    value="{{ p.id }}"></td>
+                <td style="color:var(--muted);font-size:.78rem;">#{{ p.id }}</td>
+                <td><strong>{{ p.name }}</strong></td>
+                <td>
+                  <span class="badge badge-user">{{ p.complaint_count }} complaint{{ 's' if p.complaint_count != 1 else
+                    '' }}</span>
+                </td>
+                <td>
+                  <form method="POST" action="/db-admin/delete/place/{{ p.id }}" onsubmit="return false;">
+                    <button type="button" class="btn-delete" onclick="confirmDelete(this.closest('form'))">
+                      🗑 Delete
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <div class="empty-state">
+            <p>No places found.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ USERS ═══════════════ -->
+    <div id="tab-users" class="section">
+      <div class="table-card">
+        <div class="table-card-header">
+          <h2>Users Table</h2>
+          <div class="search-box">
+            🔍 <input type="text" id="search-users" placeholder="Search username or role…"
+              oninput="filterTable('users-tbody','search-users',[2,4])">
+          </div>
+        </div>
+
+        <div class="bulk-bar" id="bulk-bar-users">
+          <span id="bulk-count-users">0 selected</span>
+          <button class="btn-bulk-delete" onclick="confirmBulkDelete('users')">🗑 Delete Selected</button>
+          <button class="btn-cancel" style="font-size:.8rem;padding:.35rem .9rem;"
+            onclick="clearSelection('users')">Cancel</button>
+        </div>
+
+        <div class="data-table-wrap">
+          {% if users %}
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="chk-all-users" onchange="toggleAll('users',this)"></th>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="users-tbody">
+              {% for u in users %}
+              <tr>
+                <td><input type="checkbox" class="row-chk chk-users" onchange="updateBulkBar('users')"
+                    value="{{ u.id }}"></td>
+                <td style="color:var(--muted);font-size:.78rem;">#{{ u.id }}</td>
+                <td style="font-size:0.85rem;"><strong>{{ u.username }}</strong></td>
+                <td style="font-family:monospace;color:var(--muted);">{{ u.password }}</td>
+                <td>
+                  {% if u.role == 'admin' %}
+                  <span class="badge badge-admin">🔑 Admin</span>
+                  {% else %}
+                  <span class="badge badge-user">👤 User</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if u.is_approved or u.role == 'admin' %}
+                  <span class="badge badge-done">✔ Approved</span>
+                  {% else %}
+                  <span class="badge badge-pending">⏳ Pending</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if u.role != 'admin' %}
+                  <div style="display:flex;">
+                    {% if not u.is_approved %}
+                    <form method="POST" action="/db-admin/approve/user/{{ u.id }}">
+                      <button type="submit" class="btn-approve">
+                        ✅ Accept
+                      </button>
+                    </form>
+                    {% endif %}
+                    <form method="POST" action="/db-admin/delete/user/{{ u.id }}" onsubmit="return false;">
+                      <button type="button" class="btn-delete" onclick="confirmDelete(this.closest('form'))">
+                        🗑 Delete
+                      </button>
+                    </form>
+                  </div>
+                  {% else %}
+                  <span style="color:var(--muted);font-size:.78rem;">Protected</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <div class="empty-state">
+            <p>No users found.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /wrapper -->
+
+  <!-- ── CONFIRM DELETE MODAL ── -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal">
+      <h3>⚠️ Confirm Delete</h3>
+      <p id="modal-msg">Are you sure you want to delete this record? This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-confirm-del" id="modal-confirm-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BULK DELETE FORM (hidden) -->
+  <form id="bulk-delete-form" method="POST" style="display:none;">
+    <input type="hidden" name="ids" id="bulk-ids-input">
+  </form>
+
+  <script>
+    // ── TAB SWITCH ──
+    function switchTab(name, btn) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // ── FILTER TABLE ──
+    function filterTable(tbodyId, inputId, colIndexes) {
+      const query = document.getElementById(inputId).value.toLowerCase();
+      const rows = document.getElementById(tbodyId).querySelectorAll('tr');
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const match = colIndexes.some(i => cells[i] && cells[i].textContent.toLowerCase().includes(query));
+        row.style.display = match ? '' : 'none';
+      });
+    }
+
+    // ── SINGLE DELETE ──
+    let pendingForm = null;
+    function confirmDelete(form) {
+      pendingForm = form;
+      document.getElementById('modal-msg').textContent = 'Are you sure you want to delete this record? This action cannot be undone.';
+      document.getElementById('modal-confirm-btn').onclick = () => {
+        // Actually submit via fetch POST
+        fetch(form.dataset.action || form.action, { method: 'POST' })
+          .then(() => location.reload());
+        closeModal();
+      };
+      document.getElementById('confirm-modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('confirm-modal').classList.remove('open');
+      pendingForm = null;
+    }
+
+    // Close on overlay click
+    document.getElementById('confirm-modal').addEventListener('click', function (e) {
+      if (e.target === this) closeModal();
+    });
+
+    // ── CHECKBOXES ──
+    function toggleAll(table, masterChk) {
+      document.querySelectorAll('.chk-' + table).forEach(chk => {
+        chk.checked = masterChk.checked;
+      });
+      updateBulkBar(table);
+    }
+
+    function updateBulkBar(table) {
+      const checked = document.querySelectorAll('.chk-' + table + ':checked');
+      const bar = document.getElementById('bulk-bar-' + table);
+      const count = document.getElementById('bulk-count-' + table);
+      count.textContent = checked.length + ' selected';
+      bar.classList.toggle('visible', checked.length > 0);
+    }
+
+    function clearSelection(table) {
+      document.querySelectorAll('.chk-' + table).forEach(c => c.checked = false);
+      const master = document.getElementById('chk-all-' + table);
+      if (master) master.checked = false;
+      updateBulkBar(table);
+    }
+
+    // ── BULK DELETE ──
+    function confirmBulkDelete(table) {
+      const checked = [...document.querySelectorAll('.chk-' + table + ':checked')];
+      if (!checked.length) return;
+      const ids = checked.map(c => c.value).join(',');
+      document.getElementById('modal-msg').textContent =
+        `Delete ${checked.length} selected record(s)? This cannot be undone.`;
+      document.getElementById('modal-confirm-btn').onclick = () => {
+        const form = document.getElementById('bulk-delete-form');
+        form.action = '/db-admin/bulk-delete/' + table;
+        document.getElementById('bulk-ids-input').value = ids;
+        form.submit();
+        closeModal();
+      };
+      document.getElementById('confirm-modal').classList.add('open');
+    }
+
+    function openPreviousLogs() {
+      window.location.href = '/db-admin/logs';
+    }
+  </script>
+</body>
+
+</html>

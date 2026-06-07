@@ -1,0 +1,38 @@
+{
+  "name": "keet-p2p-chat",
+  "version": "1.0.0",
+  "description": "Keet-style P2P encrypted chat and calling app using Hyperswarm + WebRTC",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "cap:sync": "vite build && cap sync",
+    "cap:open": "cap open android",
+    "cap:run:android": "cap run android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/app": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/haptics": "^7.0.0",
+    "@capacitor/keyboard": "^7.0.0",
+    "@capacitor/preferences": "^7.0.0",
+    "@capacitor/status-bar": "^7.0.0",
+    "hypercore-crypto": "^1.0.0",
+    "hyperswarm": "^4.7.15",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "simple-peer": "^9.11.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "@types/simple-peer": "^9.11.8",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "~5.5.3",
+    "vite": "^5.4.8"
+  }
+}

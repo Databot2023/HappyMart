@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Daily Task Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --bg: #F5F3F0;
+            --card: #FFFFFF;
+            --text: #3C3C3C;
+            --label: #6B6B6B;
+            --input-bg: #FBF9F7;
+            --input-border: #E2DDD6;
+            --focus: #9BB8B0;
+            --button: #7D9B8A;
+            --button-hover: #6C8A79;
+            --error-bg: #F6EAE7;
+            --error-text: #B26B5C;
+            --shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--card);
+            width: 100%;
+            max-width: 440px;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--input-border);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .icon-container {
+            background-color: var(--input-bg);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: var(--button);
+            font-size: 24px;
+            border: 1px solid var(--input-border);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        p.subtitle {
+            color: var(--label);
+            font-size: 15px;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--label);
+            margin-bottom: 8px;
+            margin-left: 4px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            color: var(--text);
+            transition: var(--transition);
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--focus);
+            box-shadow: 0 0 0 4px rgba(155, 184, 176, 0.15);
+            background-color: #fff;
+        }
+
+
+
+        .login-button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--button);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 24px;
+        }
+
+        .login-button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-1px);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .create-account {
+            font-size: 14px;
+            color: var(--label);
+        }
+
+        .create-account a {
+            color: var(--button);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .create-account a:hover {
+            color: var(--button-hover);
+        }
+
+        .error-message {
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: left;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Flask Flash Messages */
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            text-align: left;
+            margin-bottom: 8px;
+        }
+
+        .flash-message.success {
+            background-color: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .logout-all-link {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #6C8A79;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .logout-all-link:hover {
+            color: var(--button);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 32px 24px;
+            }
+        }
+
+        /* Tab Styles */
+        .tab-container {
+            display: flex;
+            margin-bottom: 24px;
+            background-color: var(--input-bg);
+            border-radius: 12px;
+            padding: 4px;
+            border: 1px solid var(--input-border);
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--label);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab-button.active {
+            background-color: var(--card);
+            color: var(--text);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+        <div class="icon-container">
+            <i class="bi bi-shield-lock"></i>
+        </div>
+
+        <h1>Complaints Portal</h1>
+        <p class="subtitle">Choose your login type and enter your credentials.</p>
+
+        <div class="tab-container">
+            <button class="tab-button active" onclick="showTab('user')">User Login</button>
+            <button class="tab-button" onclick="showTab('admin')">Admin Login</button>
+        </div>
+
+        <div id="flash-container" class="flash-messages">
+            {% with msgs = get_flashed_messages(with_categories=true) %}
+            {% for cat, msg in msgs %}
+            <div class="flash-message {{ 'success' if cat=='success' else '' }}">
+                {{ msg }}
+                {% if 'logged in elsewhere' in msg %}
+                <br>
+                <a href="/logout-all" class="logout-all-link">
+                    <i class="bi bi-box-arrow-right"></i> Logout from all devices
+                </a>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% endwith %}
+        </div>
+
+        <div id="validation-error" class="error-message"></div>
+
+        <!-- User Login Tab -->
+        <div id="user-tab" class="tab-content active">
+            <form id="userLoginForm" method="POST" action="/login">
+                <div class="form-group">
+                    <label for="user-username">Username</label>
+                    <input type="text" name="username" id="user-username" placeholder="Username" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="user-password">Password</label>
+                    <input type="password" name="password" id="user-password" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="login-button">User Sign In</button>
+            </form>
+        </div>
+
+        <!-- Admin Login Tab -->
+        <div id="admin-tab" class="tab-content">
+            <form id="adminLoginForm" method="POST" action="/admin/login">
+                <div class="form-group">
+                    <label for="admin-username">Admin Username</label>
+                    <input type="text" name="username" id="admin-username" placeholder="Admin Username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="admin-password">Admin Password</label>
+                    <input type="password" name="password" id="admin-password" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="login-button">Admin Sign In</button>
+            </form>
+        </div>
+
+        <div class="create-account" id="regLink">
+            New user? <a href="/register">Create an account</a>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+
+            // Set focus to the appropriate input
+            if (tabName === 'user') {
+                document.getElementById('user-username').focus();
+            } else {
+                document.getElementById('admin-username').focus();
+            }
+        }
+
+        // Form validation for user login
+        const userLoginForm = document.getElementById('userLoginForm');
+        const userUsernameInput = document.getElementById('user-username');
+        const userPasswordInput = document.getElementById('user-password');
+
+        userLoginForm.addEventListener('submit', function (e) {
+            document.getElementById('validation-error').style.display = 'none';
+            if (!userUsernameInput.value.trim() || !userPasswordInput.value.trim()) {
+                e.preventDefault();
+                document.getElementById('validation-error').textContent = "Please enter both username and password.";
+                document.getElementById('validation-error').style.display = 'block';
+            }
+        });
+
+        // Form validation for admin login
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const adminUsernameInput = document.getElementById('admin-username');
+        const adminPasswordInput = document.getElementById('admin-password');
+
+        adminLoginForm.addEventListener('submit', function (e) {
+            document.getElementById('validation-error').style.display = 'none';
+            if (!adminUsernameInput.value.trim() || !adminPasswordInput.value.trim()) {
+                e.preventDefault();
+                document.getElementById('validation-error').textContent = "Please enter both admin username and password.";
+                document.getElementById('validation-error').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+
+</html>

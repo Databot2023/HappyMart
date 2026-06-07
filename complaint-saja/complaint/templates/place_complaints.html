@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ place.name }} — ComplaintDesk</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
+    rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F5F3F0;
+      --card: #FFFFFF;
+      --text: #3C3C3C;
+      --label: #6B6B6B;
+      --input-bg: #FBF9F7;
+      --input-border: #E2DDD6;
+      --accent-soft: #9BB8B0;
+      --button: #7D9B8A;
+      --button-hover: #6C8A79;
+      --error-bg: #F6EAE7;
+      --error-text: #B26B5C;
+      --shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.05);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      background: var(--card);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--input-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm); /* Added for consistency */
+    }
+
+    .topbar-brand {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; /* Adjusted for consistency */
+      font-size: 18px; /* Adjusted for consistency */
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .topbar-brand span {
+      color: var(--button);
+    }
+
+    .topbar-brand i { /* Added for consistency */
+      color: var(--button);
+      font-size: 22px;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text);
+      font-size: 14px; /* Adjusted for consistency */
+      text-decoration: none;
+      padding: 8px 16px; /* Adjusted for consistency */
+      border-radius: 12px; /* Adjusted for consistency */
+      transition: var(--transition);
+      border: 1px solid var(--input-border);
+      background: var(--input-bg); /* Adjusted for consistency */
+    }
+
+    .back-btn:hover {
+      background: var(--card); /* Adjusted for consistency */
+      border-color: var(--accent-soft);
+      color: var(--text);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--card);
+      color: var(--text);
+      padding: 48px 24px 32px; /* Adjusted for consistency */
+      border-bottom: 1px solid var(--input-border);
+      position: relative;
+    }
+
+    .hero-inner {
+      max-width: 43.75rem;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--label);
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .hero-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 32px; /* Adjusted for consistency */
+      margin-bottom: 1.5rem;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    /* ── Progress Bar ── */
+    .progress-wrap {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 10px; /* Adjusted */
+      height: 8px; /* Adjusted */
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--button);
+      transition: width 0.8s ease;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--label);
+      margin-top: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* ── Main ── */
+    .main {
+      max-width: 700px; /* Adjusted for better content width */
+      margin: 0 auto;
+      padding: 48px 24px; /* Adjusted for consistency */
+      flex: 1;
+      width: 100%;
+    }
+
+    /* ── Step counter ── */
+    .step-counter {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .step-label {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--label);
+    }
+
+    .step-dots {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .step-dot {
+      width: 0.6rem;
+      height: 0.6rem;
+      border-radius: 50%;
+      background: var(--input-border);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .step-dot.active {
+      background: var(--button);
+      transform: scale(1.2);
+    }
+
+    /* ── Complaint Card ── */
+    .comp-card {
+      background: var(--card);
+      border: 1px solid var(--input-border); /* Kept for subtle definition */
+      box-shadow: var(--shadow);
+      border-radius: 1rem;
+      padding: 2.5rem 2rem;
+      position: relative;
+      height: auto;
+      text-align: center;
+      animation: cardFadeIn 0.4s ease-out both;
+    }
+
+    @keyframes cardFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .comp-card-top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .comp-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 12px; /* Adjusted */
+      color: var(--label);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .status-chip {
+      font-size: 11px; /* Adjusted */
+      font-weight: 700;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .status-chip.pending {
+      background: var(--error-bg);
+      color: var(--error-text);
+    }
+
+    .status-chip.completed {
+      background: var(--success-bg); /* Using existing success variable */
+      color: var(--button);
+    }
+
+    .comp-date {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--label);
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      padding: 0.5rem 1.2rem;
+      border-radius: 0.75rem;
+      margin: 0 auto 2rem;
+      width: fit-content;
+    }
+
+    .comp-text {
+      font-size: 16px; /* Adjusted */
+      color: var(--text);
+      line-height: 1.6;
+      padding: 1.75rem;
+      background: var(--input-bg);
+      border-radius: 0.75rem;
+      border: 1px solid var(--input-border);
+      margin-bottom: 2rem;
+      word-break: break-word;
+      text-align: left;
+    }
+
+    /* ── Complete Button ── */
+    .btn-back {
+      background: var(--button);
+      color: #fff;
+      border: none;
+      border-radius: 20px; /* Adjusted for consistency */
+      padding: 0.7rem 1.5rem; /* Adjusted for consistency */
+      font-family: 'Outfit', sans-serif; /* Adjusted for consistency */
+      font-weight: 600;
+      font-size: 0.9rem; /* Adjusted for consistency */
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      display: inline-flex; /* Changed to inline-flex for icon alignment */
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-back:hover { /* Renamed from .btn-complete:hover */
+      background: var(--button-hover);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(125, 155, 138, 0.3);
+    }
+    /* The original .btn-complete was for the form submit button, not the back button. Renamed the class to btn-complete for the form button. */
+    .btn-complete:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(155, 184, 176, 0.3);
+    }
+
+    /* ── Navigation ── */
+    .nav-btns {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn-nav {
+      flex: 1;
+      background: none;
+      border: 1px solid var(--input-border);
+      color: var(--text);
+      border-radius: 0.75rem;
+      padding: 0.6rem 1rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-nav:hover:not(:disabled) {
+      background: var(--input-bg);
+      border-color: var(--accent-soft);
+    }
+
+    .btn-nav:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* ── Summary panel ── */
+    .summary-panel {
+      background: var(--card);
+      border: 1px solid var(--input-border);
+      box-shadow: var(--shadow);
+      border-radius: 1rem;
+      padding: 1.75rem;
+      margin-bottom: 3rem;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .sum-stat {
+      text-align: center;
+    }
+
+    .sum-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 32px; /* Adjusted */
+      color: var(--text);
+      line-height: 1.1;
+    }
+
+    .sum-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.4rem;
+      font-weight: 600;
+    }
+
+    /* ── Empty state ── */
+    .empty-box {
+      border: 2px dashed var(--input-border);
+      border-radius: 16px;
+      padding: 3rem;
+      text-align: center; /* Kept for consistency */
+      color: var(--text-muted);
+      background: var(--card);
+    }
+
+    .empty-box i {
+      font-size: 2.5rem;
+      color: var(--accent-soft);
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    /* ── All done ── */
+    .all-done {
+      text-align: center;
+      padding: clamp(3rem, 10vw, 5rem) 2rem;
+      background: var(--card);
+      border: 1px solid var(--input-border);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .all-done i {
+      font-size: clamp(3.5rem, 8vw, 5rem);
+      color: var(--button);
+      display: block;
+      margin-bottom: 1.5rem;
+      filter: drop-shadow(0 10px 20px rgba(125, 155, 138, 0.2));
+    }
+
+    .all-done h2 {
+      font-family: 'Outfit', sans-serif; /* Changed to Outfit for consistency */
+      font-weight: 800;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── Finished Works Section ── */
+    .finished-section {
+      margin-top: 3rem;
+      padding: 48px 24px; /* Adjusted for consistency */
+      background: #FAF9F7;
+      border-top: 1px solid var(--input-border);
+      border-radius: 24px 24px 0 0;
+      width: 100%;
+      position: relative;
+    }
+
+    .finished-inner {
+      max-width: 700px; /* Kept for content width */
+      margin: 0 auto;
+    }
+
+    .finished-title {
+      font-family: 'Outfit', sans-serif; /* Changed to Outfit for consistency */
+      font-weight: 700; /* Adjusted */
+      font-size: 20px; /* Adjusted */
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .finished-card {
+      background: var(--card);
+      border: 1px solid var(--input-border);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+
+    .finished-card:hover {
+      opacity: 1;
+    }
+
+    .finished-info {
+      flex: 1;
+    }
+
+    .finished-note {
+      font-size: 14px; /* Adjusted */
+      color: var(--ink);
+      line-height: 1.4;
+      margin-bottom: 0.3rem;
+    }
+
+    .finished-meta {
+      font-size: 0.7rem;
+      color: var(--label);
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .finished-badge-sm {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--button); /* Using primary button color */
+      background: #f0faf4;
+      padding: 0.2em 0.6em;
+      border-radius: 2px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .topbar {
+        padding: 0.75rem 1rem;
+        box-shadow: var(--shadow-sm); /* Ensure shadow on smaller screens */
+      }
+
+      .hero {
+        padding: 2rem 1rem;
+      }
+      .hero-title {
+        font-size: 1.6rem;
+      }
+
+      .summary-panel {
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .sum-num {
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      .topbar-brand {
+        font-size: 1rem;
+      }
+
+      .hero-title {
+        font-size: 1.4rem;
+      }
+
+      .comp-card {
+        padding: 1.5rem 1rem; /* Adjusted */
+      }
+
+      .comp-text {
+        padding: 0.75rem;
+        font-size: 0.92rem;
+      }
+
+      .btn-nav {
+        font-size: 0.75rem;
+      }
+
+      .summary-panel {
+        justify-content: space-between;
+      }
+
+      .sum-stat {
+        flex: 1;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Topbar -->
+  <nav class="topbar"> 
+    <a href="/user" class="topbar-brand">
+      <i class="bi bi-check2-square"></i>
+      <span>Daily Task Manager</span>
+    </a>
+    <a href="/user" class="back-btn">
+      <i class="bi bi-arrow-left"></i> All Locations
+    </a>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-label">📍 Location Report</div>
+      <div class="hero-title">{{ place.name }}</div>
+      <div class="progress-wrap">
+        <div class="progress-fill" id="progressBar" style="width: 0%;"></div> 
+      </div>
+      <div class="progress-label">
+        <span>{{ completed }} of {{ total }} completed</span>
+        <span>{% if total > 0 %}{{ (completed / total * 100)|int }}%{% else %}—{% endif %}</span>
+      </div>
+      <div id="progressData" data-total="{{ total }}" data-completed="{{ completed }}" hidden></div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main class="main">
+
+    {% if pending_list or finished_list %}
+
+    <!-- Summary stats -->
+    <div class="summary-panel">
+      <div class="sum-stat">
+        <div class="sum-num">{{ total }}</div>
+        <div class="sum-label">Total</div>
+      </div>
+      <div class="sum-stat">
+        <div class="sum-num" style="color:var(--error-text);">{{ (pending_list or [])|length }}</div> 
+        <div class="sum-label">Pending</div>
+      </div>
+      <div class="sum-stat">
+        <div class="sum-num" style="color:var(--button);">{{ (finished_list or [])|length }}</div> 
+        <div class="sum-label">Completed</div>
+      </div>
+    </div>
+
+    {% if not pending_list %}
+    <!-- All done state -->
+    <div class="all-done">
+      <i class="bi bi-patch-check-fill"></i>
+      <h2>All Completed</h2>
+      <p style="color:var(--text-muted);font-size:0.88rem;margin-bottom:1.5rem;">There are no pending complaints for {{
+        place.name }}.</p> 
+      <a href="/user" class="btn-complete">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+    {% else %}
+
+    <!-- Step counter -->
+    <div class="step-counter">
+      <div class="step-label">Complaint <span id="currentNum">1</span> of {{ (pending_list or [])|length }}</div>
+      <div class="step-dots" id="stepDots">
+        {% for c in pending_list %}
+        <div class="step-dot {% if loop.index0 == 0 %}active{% endif %}" data-index="{{ loop.index0 }}" 
+          title="Complaint {{ loop.index }}"></div> 
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Card container -->
+    <div id="cardWrap">
+      {% for c in pending_list %}
+      <div class="comp-card pending {% if loop.index0 != 0 %}d-none{% endif %}" id="card-{{ loop.index0 }}"> 
+        <div class="comp-card-top">
+          <div>
+            <div class="comp-num">Complaint #{{ loop.index }}</div>
+          </div>
+          <div>
+            <span class="status-chip pending"><i class="bi bi-clock"></i> Pending Work</span>
+          </div>
+        </div>
+
+        <div class="comp-date">
+          <i class="bi bi-calendar3"></i>
+          {{ c.created_at[:10] }} 
+          <span style="opacity:0.5">|</span>
+          <i class="bi bi-clock"></i>
+          {{ c.created_at[11:16] }} 
+        </div>
+
+        <div class="comp-text">{{ c.note }}</div>
+
+        <form method="POST" action="/user/complete_complaint/{{ c.id }}"
+          onsubmit="return confirm('Mark this complaint as complete?')">
+          <button type="submit" class="btn-complete">
+            <i class="bi bi-check-lg"></i> Mark as Complete
+          </button>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-btns">
+      <button class="btn-nav" id="prevBtn" onclick="navigate(-1)" disabled>
+        <i class="bi bi-chevron-left"></i> Previous
+      </button>
+      <button class="btn-nav" id="nextBtn" onclick="navigate(1)">
+        Next <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+    {% endif %}
+
+    <!-- Finished History Section -->
+    {% if finished_list %}
+    <div class="finished-section">
+      <div class="finished-inner">
+        <div class="finished-title">
+          <i class="bi bi-clock-history"></i>
+          Completed Works ({{ (finished_list or [])|length }}) 
+        </div>
+
+        {% for c in finished_list %}
+        <div class="finished-card">
+          <div class="finished-info">
+            <div class="finished-note">{{ c.note }}</div>
+            <div class="finished-meta">
+              <span><i class="bi bi-calendar-check me-1"></i>Completed: {{ c.completed_at[:16] if c.completed_at else 
+                '—' }}</span> 
+              <span><i class="bi bi-file-earmark-text me-1"></i>Ref #{{ c.id }}</span>
+            </div>
+          </div>
+          <div class="status-chip completed">
+            <i class="bi bi-check-circle-fill me-1"></i>Done
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-box">
+      <i class="bi bi-patch-check"></i>
+      <p style="font-weight:600;margin-bottom:0.25rem;">Nothing to show</p> 
+      <span style="font-size:0.85rem;">No complaints have been filed for {{ place.name }} yet.</span>
+    </div>
+    {% endif %}
+
+  </main>
+
+  <script>
+    const total = document.querySelectorAll('[id^="card-"]').length;
+    let current = 0;
+
+    function goTo(idx, direction) {
+      if (total === 0) return; // Handle empty list case
+      const cards = document.querySelectorAll('[id^="card-"]');
+      const dots = document.querySelectorAll('.step-dot');
+      if (idx < 0 || idx >= total) return;
+
+      cards[current].classList.add('d-none');
+      dots[current].classList.remove('active');
+
+      current = idx;
+      const card = cards[current];
+      card.classList.remove('d-none');
+      // Animation direction
+      card.classList.remove('slide-left', 'cardSlide');
+      void card.offsetWidth; // reflow
+      if (direction === 'left') card.classList.add('slide-left');
+
+      dots[current].classList.add('active');
+      document.getElementById('currentNum').textContent = current + 1;
+
+      document.getElementById('prevBtn').disabled = (current === 0);
+      document.getElementById('nextBtn').disabled = (current === total - 1);
+    }
+
+    function navigate(dir) {
+      goTo(current + dir, dir < 0 ? 'left' : 'right');
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigate(-1);
+    });
+
+    // Init button state
+    if (total > 0) {
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      if (prevBtn) prevBtn.disabled = true;
+      if (nextBtn) nextBtn.disabled = (total <= 1);
+    }
+
+    // Progress bar - read data from hidden element
+    (function initProgressBar() {
+      const progressData = document.getElementById('progressData');
+      if (progressData) {
+        const totalComplaints = parseInt(progressData.dataset.total) || 0;
+        const completedCount = parseInt(progressData.dataset.completed) || 0;
+        if (totalComplaints > 0) {
+          const prog = Math.round((completedCount / totalComplaints) * 100);
+          document.getElementById('progressBar').style.width = prog + '%';
+        }
+      }
+    })();
+
+  </script>
+</body>
+
+</html>
