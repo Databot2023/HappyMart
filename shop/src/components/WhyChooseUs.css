@@ -1,0 +1,64 @@
+/* ─── Why Choose Us ─── */
+.why-choose-us {
+  background-color: var(--color-white);
+}
+
+.why-choose-us__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-32);
+}
+
+.why-choose-us__item {
+  text-align: center;
+  padding: var(--space-32) var(--space-16);
+  border-radius: var(--radius-md);
+  background-color: var(--color-off-white);
+  transition: all var(--transition-slow);
+}
+
+.why-choose-us__item:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.why-choose-us__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  font-size: 1.4rem;
+  margin-bottom: var(--space-16);
+}
+
+.why-choose-us__title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin-bottom: var(--space-8);
+  color: var(--color-ink);
+}
+
+.why-choose-us__desc {
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  margin: 0 auto;
+  max-width: 28ch;
+  color: var(--color-ink-light);
+}
+
+@media (max-width: 768px) {
+  .why-choose-us__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-16);
+  }
+}
+
+@media (max-width: 480px) {
+  .why-choose-us__grid {
+    grid-template-columns: 1fr;
+  }
+}

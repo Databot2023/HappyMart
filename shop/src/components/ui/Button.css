@@ -1,0 +1,63 @@
+/* ─── Button Component ─── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  line-height: 1;
+  padding: 14px 28px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-base);
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+@media (max-width: 480px) {
+  .btn {
+    padding: 12px 24px;
+    font-size: calc(var(--text-sm) * 1.1);
+    min-height: 44px;
+  }
+}
+
+/* Primary */
+.btn--primary {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.btn--primary:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Secondary */
+.btn--secondary {
+  background-color: transparent;
+  color: var(--color-ink);
+  border: 1.5px solid var(--color-ink);
+}
+
+.btn--secondary:hover {
+  background-color: var(--color-ink);
+  color: var(--color-white);
+  transform: translateY(-1px);
+}
+
+/* Ghost (for nav CTAs) */
+.btn--ghost {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: 10px 22px;
+  font-size: var(--text-xs);
+}
+
+.btn--ghost:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
