@@ -4,6 +4,8 @@
  * Every component reads from here. No hardcoded content anywhere else.
  */
 
+const base = typeof import.meta !== 'undefined' ? import.meta.env.BASE_URL : '/';
+
 const business = {
   name: "Happy Mart",
   tagline: "Happy Mart — Super Market",
@@ -16,7 +18,7 @@ const business = {
     area: "NH 66, opposite Alamcode Juma Masjid",
     address: "Opposite Alamcode Juma Masjid, NH 66, Kochuvila, Alamcode P.O., Thiruvananthapuram, Kerala 695102",
     googleMapsLink:
-      "https://maps.google.com/?cid=1863261730478802673&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "https://maps.app.goo.gl/a9rqgAfMxuYCqm2e8",
   },
 
   phone: "09746898547",
@@ -28,27 +30,27 @@ const business = {
     { day: "Sunday", time: "9:00 AM – 9:30 PM" },
   ],
 
-  heroImage: "/images/hero.jpg",
+  heroImage: `${base}images/hero.jpg`,
 
-  aboutImage: "/images/hero.jpg",
+  aboutImage: `${base}images/hero.jpg`,
 
   services: [
     {
       title: "Grocery Essentials",
       description: "Staples, packaged goods, and every day-to-day household item you need.",
-      image: "/images/service1.jpg",
+      image: `${base}images/service1.jpg`,
       alt: "Interior of Happy Mart showing well-stocked grocery shelves and aisles",
     },
     {
       title: "Fresh Vegetables & Produce",
       description: "Regularly stocked fresh vegetables, including mushrooms — a local favourite.",
-      image: "/images/service2.jpg",
+      image: `${base}images/service2.jpg`,
       alt: "Fresh vegetables and produce section at Happy Mart",
     },
     {
       title: "Household & Personal Care",
       description: "Cleaning supplies, toiletries, and personal care products for the whole family.",
-      image: "/images/service3.jpg",
+      image: `${base}images/service3.jpg`,
       alt: "Household and personal care products aisle at Happy Mart",
     },
   ],
@@ -99,7 +101,7 @@ const business = {
   ],
 
   ctas: {
-    primary: { text: "Visit Us", href: "https://maps.google.com/?cid=1863261730478802673&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA" },
+    primary: { text: "Visit Us", href: "https://maps.app.goo.gl/a9rqgAfMxuYCqm2e8" },
     secondary: { text: "Contact Us", href: "#contact" },
   },
 
